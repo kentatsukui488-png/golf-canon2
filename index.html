@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!-- saved from url=(0109)file:///C:/Users/tukui/OneDrive/Microsoft%20Copilot%20Chat%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/index.html? -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社会人ゴルフ部 管理アプリ</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --accent-color: #f57c00;
+            --bg-color: #f1f8e9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: #e0e0e0;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #333;
+        }
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .panel {
+            display: none;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .panel.active {
+            display: block;
+        }
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        form {
+            display: grid;
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        input, textarea, button {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .list-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+    </style>
+
+    <script>
+        function showPanel(panelId, btnId) {
+            document.getElementById("panel-schedule").style.display = "none";
+            document.getElementById("panel-score").style.display = "none";
+            document.getElementById("panel-issue").style.display = "none";
+            document.getElementById(panelId).style.display = "block";
+            document.getElementById("btn-schedule").className = "tab-btn";
+            document.getElementById("btn-score").className = "tab-btn";
+            document.getElementById("btn-issue").className = "tab-btn";
+            document.getElementById(btnId).className = "tab-btn active";
+        }
+    </script>
+</head>
+<body>
+
+<header>
+    <h1>⛳ 社会人ゴルフ部 </h1>
+</header>
+
+<div class="container">
+    <div class="tabs">
+        <button id="btn-schedule" class="tab-btn" onclick="showPanel('panel-schedule', 'btn-schedule')">📅 スケジュール</button>
+        <button id="btn-score" class="tab-btn" onclick="showPanel('panel-score', 'btn-score')">🏆 スコア管理</button>
+        <button id="btn-issue" class="tab-btn active" onclick="showPanel('panel-issue', 'btn-issue')">🎯 課題・ToDo</button>
+    </div>
+
+    <!-- スケジュールパネル -->
+    <div id="panel-schedule" class="panel active" style="display: none;">
+        <h2>イベント・スケジュール登録</h2>
+        <form id="schedule-form">
+            <input type="date" id="sched-date" required="">
+            <input type="text" id="sched-title" placeholder="イベント名" required="">
+            <input type="text" id="sched-location" placeholder="場所" required="">
+            <button type="submit">スケジュールを追加</button>
+        </form>
+        <div id="schedule-list"></div>
+    </div>
+
+    <!-- スコア管理パネル -->
+    <div id="panel-score" class="panel" style="display: none;">
+        <h2>スコア記録</h2>
+        <form id="score-form">
+            <input type="text" id="score-name" placeholder="部員名" required="">
+            <input type="date" id="score-date" required="">
+            <input type="number" id="score-gross" placeholder="グロススコア" min="50" max="200" required="">
+            <input type="number" id="score-putt" placeholder="パット数">
+            <button type="submit">スコアを記録</button>
+        </form>
+        <div id="score-list"></div>
+    </div>
+
+    <!-- 課題・ToDoパネル -->
+    <div id="panel-issue" class="panel" style="display: block;">
+        <h2>各自の課題 &amp; 対策</h2>
+        <form id="issue-form">
+            <input type="text" id="issue-name" placeholder="部員名" required="">
+            <input type="text" id="issue-title" placeholder="現在の課題" required="">
+            <textarea id="issue-drill" placeholder="取り組む練習メニュー・対策" rows="2" required=""></textarea>
+            <button type="submit">課題を登録</button>
+        </form>
+        <div id="issue-list"></div>
+    </div>
+</div>
+
+<script>
+    // --- データの読み書き ---
+    function getData(key) {
+        return JSON.parse(localStorage.getItem("golf_" + key)) || [];
+    }
+    function setData(key, data) {
+        localStorage.setItem("golf_" + key, JSON.stringify(data));
+    }
+
+    // --- 共通削除処理 ---
+    function deleteItem(key, id, callback) {
+        if (confirm("本当に削除しますか？")) {
+            var list = getData(key).filter(function(item) { return item.id !== id; });
+            setData(key, list);
+            callback();
+        }
+    }
+
+    // --- 1. スケジュール機能 ---
+    document.getElementById("schedule-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var list = getData("schedule");
+        list.push({
+            id: Date.now(),
+            date: document.getElementById("sched-date").value,
+            title: document.getElementById("sched-title").value,
+            location: document.getElementById("sched-location").value
+        });
+        list.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+        setData("schedule", list);
+        renderSchedule();
+        e.target.reset();
+    });
+
+    function renderSchedule() {
+        var container = document.getElementById("schedule-list");
+        if (!container) return;
+        container.innerHTML = "";
+        getData("schedule").forEach(function(item) {
+            var itemDiv = document.createElement("div");
+            itemDiv.className = "list-item";
+            
+            var textDiv = document.createElement("div");
+            textDiv.innerHTML = "<strong>【" + item.date + "】 " + item.title + "</strong><br><span style='color:#666; font-size:13px;'>📍 " + item.location + "</span>";
+            
+            var btn = document.createElement("button");
+            btn.className = "delete-btn";
+            btn.style.backgroundColor = "#d32f2f";
+            btn.textContent = "削除";
+            btn.onclick = function() { deleteItem("schedule", item.id, renderSchedule); };
+            
+            itemDiv.appendChild(textDiv);
+            itemDiv.appendChild(btn);
+            container.appendChild(itemDiv);
+        });
+    }
+
+    // --- 2. スコア機能 ---
+    document.getElementById("score-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var list = getData("score");
+        list.push({
+            id: Date.now(),
+            name: document.getElementById("score-name").value,
+            date: document.getElementById("score-date").value,
+            gross: document.getElementById("score-gross").value, // カッコ修正完了
+            putt: document.getElementById("score-putt").value || "-"
+        });
+        list.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+        setData("score", list);
+        renderScore();
+        e.target.reset();
+    });
+
+    function renderScore() {
+        var container = document.getElementById("score-list");
+        if (!container) return;
+        container.innerHTML = "";
+        getData("score").forEach(function(item) {
+            var itemDiv = document.createElement("div");
+            itemDiv.className = "list-item";
+            
+            var textDiv = document.createElement("div");
+            textDiv.innerHTML = "<strong>" + item.name + "</strong> (" + item.date + ")<br><span class='badge'>Gross: " + item.gross + "</span><span class='badge' style='background:#00796b;'>Putt: " + item.putt + "</span>";
+            
+            var btn = document.createElement("button");
+            btn.className = "delete-btn";
+            btn.style.backgroundColor = "#d32f2f";
+            btn.textContent = "削除";
+            btn.onclick = function() { deleteItem("score", item.id, renderScore); };
+            
+            itemDiv.appendChild(textDiv);
+            itemDiv.appendChild(btn);
+            container.appendChild(itemDiv);
+        });
+    }
+
+    // --- 3. 課題機能 ---
+    document.getElementById("issue-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var list = getData("issue");
+        list.push({
+            id: Date.now(),
+            name: document.getElementById("issue-name").value,
+title: document.getElementById("issue-title").value,
+drill: document.getElementById("issue-drill").value
+});
+setData("issue", list);
+renderIssue();
+e.target.reset();
+});
+function renderIssue() {
+var container = document.getElementById("issue-list");
+if (!container) return;
+container.innerHTML = "";
+getData("issue").forEach(function(item) {
+var itemDiv = document.createElement("div");
+itemDiv.className = "list-item";
+var textDiv = document.createElement("div");
+textDiv.style.maxWidth = "70%";
+textDiv.innerHTML = "" + item.name + ": " + item.title + "📋 " + item.drill + "";
+var btnArea = document.createElement("div");
+btnArea.style.display = "flex";
+btnArea.style.gap = "5px";
+var clearBtn = document.createElement("button");
+clearBtn.className = "delete-btn";
+clearBtn.style.backgroundColor = "#2e7d32";
+clearBtn.textContent = "解消";
+clearBtn.onclick = function() { deleteItem("issue", item.id, renderIssue); };
+var deleteBtn = document.createElement("button");
+deleteBtn.className = "delete-btn";
+deleteBtn.style.backgroundColor = "#d32f2f";
+deleteBtn.textContent = "削除";
+deleteBtn.onclick = function() { deleteItem("issue", item.id, renderIssue); };
+btnArea.appendChild(clearBtn);
+btnArea.appendChild(deleteBtn);
+itemDiv.appendChild(textDiv);
+itemDiv.appendChild(btnArea);
+container.appendChild(itemDiv);
+});
+}
+// 初回読み込み
+renderSchedule();
+renderScore();
+renderIssue();</script></body></html>
